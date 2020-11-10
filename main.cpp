@@ -350,8 +350,6 @@ public:
 int main()
 {
 	Asm asmI;
-	//asmI.setRegister("AL", 5);
-	//asmI.printBits("AL");
 	while (1)
 	{
 		std::string command, arg1, arg2;

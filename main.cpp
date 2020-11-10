@@ -349,7 +349,7 @@ public:
 
 int main()
 {
-	Asm asmI;
+	AsmI asmI;
 	while (1)
 	{
 		std::string command, arg1, arg2;

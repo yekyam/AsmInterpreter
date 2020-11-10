@@ -7,7 +7,7 @@ is to get more comfortable with assembly syntax, and see the immediate results o
 Any time an arg is (NULL), the arg is still necessary, just pass in any value  
 Commands:  
 **mov   (to reg), (from reg)**  
-**mov   (to reg), (value)**       *:Moves either a value, or a value stored in a register to the specified register*
+**mov   (to reg), (value)**       *:Moves either a value, or a value stored in a register to the specified register*  
 **or    (to reg), (from reg)**    *:Performs the bitwise OR operation, with the result stored in the first register*  
 **and   (to reg), (from reg)**    *:Performs the bitwise AND operation, with the result stored in the first register*  
 **xor   (to reg), (from reg)**    *:Performs the bitwise XOR operation, with the result stored in the first register*  

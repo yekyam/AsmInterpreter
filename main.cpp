@@ -54,6 +54,7 @@ public:
 		else if (lowercase(command) == "add") addRegister(arg1, arg2);
 		else if (lowercase(command) == "sub") subRegister(arg1, arg2);
 		else if (lowercase(command) == "mul") mulRegister(arg1, arg2);
+		else if (lowercase(command) == "div") divRegister(arg1, arg2);
 		else if (lowercase(command) == "cmp") cmpRegister(arg1, arg2);
 		else if (lowercase(command) == "push") pushRegister(arg1);
 		else if (lowercase(command) == "pop") popRegister(arg1);
@@ -282,6 +283,29 @@ public:
 		}
 	}
 
+	void divRegister(std::string arg1, std::string arg2)
+	{
+		u8 value1, value2;
+		bool foundReg1 = false, foundReg2 = false;
+		for (auto& x : registers)
+		{
+			if (x.registerID == getRegisterID(arg2))
+			{
+				foundReg1 = true;
+				value2 = x.registerValue;
+			}
+			if (x.registerID == getRegisterID(arg1))
+			{
+				foundReg2 = true;
+				value1 = x.registerValue;
+			}
+		}
+		if (foundReg1 && foundReg2)
+		{
+			setRegister(arg1, value1 / value2);
+		}
+	}
+
 	void cmpRegister(std::string arg1, std::string arg2)
 	{
 		u8 value1, value2;
@@ -350,6 +374,8 @@ public:
 int main()
 {
 	AsmI asmI;
+	//asmI.setRegister("AL", 5);
+	//asmI.printBits("AL");
 	while (1)
 	{
 		std::string command, arg1, arg2;

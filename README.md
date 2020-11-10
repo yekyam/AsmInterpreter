@@ -4,7 +4,7 @@ This is NOT a fully fledged CPU emulator! This is a learning tool for people to 
 is to get more comfortable with assembly syntax, and see the immediate results of operations. All the 
 registers are 8 bits long, which is a good length to see how the bits change without being too limiting.
 
-**Registers:** *AL, BL, CL* \
+**Registers:** *AL, BL, CL*  
 
 Any time an arg is (NULL), the arg is still necessary, just pass in any value  
 Commands:  

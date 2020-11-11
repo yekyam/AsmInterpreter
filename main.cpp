@@ -25,7 +25,7 @@ enum { AL, BL, CL, NUM_REGISTERS };
 class AsmI
 {
 private:
-	std::vector<std::string> cutStrings;
+	std::vector<std::string> arguments;
 	bool isEqual;
 	struct Register
 	{
@@ -36,6 +36,7 @@ private:
 	std::string registerNames[NUM_REGISTERS] = { "AL", "BL", "CL" };
 	std::stack<u8> stack; 
 public:
+	//Set each register "ID" and set the values to 0. Used loop instead of hardcoded to allow for more registers if desired
 	AsmI()
 	{
 		int i = 0;
@@ -47,15 +48,16 @@ public:
 		}
 	}
 
-	void handleInput(std::string& input)
+	//"Cuts" input into individual strings
+	void handleInput(const std::string& input)
 	{
 		std::string word;
-		for (auto x : input)
+		for (const auto& x : input)
 		{
-			if (x == ',')  { }
+			if (x == ',')  {}
 			else if (x == ' ')
 			{
-				cutStrings.push_back(word);
+				arguments.push_back(word);
 				word = "";
 			}
 			else
@@ -63,62 +65,72 @@ public:
 				word += x;
 			}
 		}
-		cutStrings.push_back(word);
+		arguments.push_back(word);
 	}
 
+	//Handles the cut strings
 	void command()
 	{
-		if (cutStrings.size() < 1)
+		if (arguments.size() < 1)
 		{
 			std::cout << "Invalid number of arguments! Must have at least one argument!\n";
 		}
-		else if (cutStrings.size() == 1)
+		else if (arguments.size() == 1)
 		{
-			std::string command = cutStrings.at(0);
-			if (lowercase(command) == "flags") printFlags();
-			else if (lowercase(command) == "help") printHelp();
+			std::string command = lowercase(arguments.at(0));
+
+			if (command == "flags") printFlags();
+			else if (command == "help") printHelp();
 			else std::cout << "Error! Invalid command!\n";
-			cutStrings.clear();
+			arguments.clear();
 		}
-		else if (cutStrings.size() == 2)
+		else if (arguments.size() == 2)
 		{
-			std::string command = cutStrings.at(0);
-			std::string arg1 = cutStrings.at(1);
-			if (lowercase(command) == "push") pushRegister(uppercase(arg1));
-			else if (lowercase(command) == "pop") popRegister(uppercase(arg1));
+			std::string command = lowercase(arguments.at(0));
+			std::string arg1 = uppercase(arguments.at(1));
+
+			if (command == "push") pushRegister(arg1);
+			else if (command == "pop") popRegister(arg1);
 			else std::cout << "Error! Invalid command!\n";
-			cutStrings.clear();
+			arguments.clear();
 		}
 		else {
-			std::string command = cutStrings.at(0);
-			std::string arg1 = uppercase(cutStrings.at(1));
-			std::string arg2 = uppercase(cutStrings.at(2));
+			std::string command = lowercase(arguments.at(0));
+			std::string arg1 = uppercase(arguments.at(1));
+			std::string arg2 = uppercase(arguments.at(2));
 
-			if (lowercase(command) == "mov") mov(arg1, arg2);
-			else if (lowercase(command) == "or") orRegister(arg1, arg2);
-			else if (lowercase(command) == "xor") xorRegister(arg1, arg2);
-			else if (lowercase(command) == "and") andRegister(arg1, arg2);
-			else if (lowercase(command) == "shl") shlRegister(arg1, arg2);
-			else if (lowercase(command) == "shr") shrRegister(arg1, arg2);
-			else if (lowercase(command) == "add") addRegister(arg1, arg2);
-			else if (lowercase(command) == "sub") subRegister(arg1, arg2);
-			else if (lowercase(command) == "mul") mulRegister(arg1, arg2);
-			else if (lowercase(command) == "div") divRegister(arg1, arg2);
-			else if (lowercase(command) == "cmp") cmpRegister(arg1, arg2);
+			if (command == "mov") mov(arg1, arg2);
+			else if (command == "or") orRegister(arg1, arg2);
+			else if (command == "xor") xorRegister(arg1, arg2);
+			else if (command == "and") andRegister(arg1, arg2);
+			else if (command == "shl") shlRegister(arg1, arg2);
+			else if (command == "shr") shrRegister(arg1, arg2);
+			else if (command == "add") addRegister(arg1, arg2);
+			else if (command == "sub") subRegister(arg1, arg2);
+			else if (command == "mul") mulRegister(arg1, arg2);
+			else if (command == "div") divRegister(arg1, arg2);
+			else if (command == "cmp") cmpRegister(arg1, arg2);
 			else std::cout << "Error! Invalid command!\n";
-			cutStrings.clear();
+			arguments.clear();
 		}
 	}
 
-	static std::string lowercase(std::string& string)
+	//Helper Function, return a lowercase copy of a string
+	static std::string lowercase(const std::string& string)
 	{
-		std::string result;
-		for (const auto& x : string)
-			result += std::tolower(x);
-		return result; 
+		if (std::isalpha(string.at(0))) {
+			std::string result;
+			for (auto& x : string)
+			{
+				result += std::tolower(x);
+			}
+			return result;
+		}
+		else return string;
 	}
 
-	static std::string uppercase(std::string& string)
+	//Helper Function, return an uppercase copy of a string
+	static std::string uppercase(const std::string& string)
 	{
 		if (std::isalpha(string.at(0))) {
 			std::string result;
@@ -131,7 +143,8 @@ public:
 		else return string;
 	}
 
-	static int getRegisterID(std::string name)
+	//Generates a register "ID"
+	static int getRegisterID(const std::string& name)
 	{
 		int result = 0;
 		for (const auto& x : name)
@@ -139,17 +152,20 @@ public:
 		return result;
 	}
 
-	void setRegister(std::string registerName, u8 value)
+	//Sets the value for a specific register
+	void setRegister(const std::string& registerName, u8 value)
 	{
 		for (auto& x : registers)
 		{
 			if (x.registerID == getRegisterID(registerName))
 			{
 				x.registerValue = value;
+				break;
 			}
 		}
 	}
 
+	//Prints the value for all the registers
 	void printRegisters()
 	{
 		int i = 0;
@@ -161,7 +177,8 @@ public:
 		}
 	}
 
-	void printBits(std::string registerName)
+	//Prints the bits of a specific register (for debugging)
+	void printBits(const std::string& registerName)
 	{
 		for (auto& x : registers)
 		{
@@ -173,7 +190,8 @@ public:
 		}
 	}
 
-	void mov(std::string arg1, std::string arg2)
+	//Moves a value into a register, or the value of a register
+	void mov(const std::string& arg1, const std::string& arg2)
 	{
 		try
 		{
@@ -207,7 +225,8 @@ public:
 		}
 	}
 
-	void orRegister(std::string arg1, std::string arg2)
+	//Bitwise or
+	void orRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -230,7 +249,8 @@ public:
 		}
 	}
 
-	void xorRegister(std::string arg1, std::string arg2)
+	//Bitwise xor
+	void xorRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -253,7 +273,8 @@ public:
 		}
 	}
 
-	void andRegister(std::string arg1, std::string arg2)
+	//Bitwise and
+	void andRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -276,7 +297,8 @@ public:
 		}
 	}
 
-	void shlRegister(std::string arg1, std::string arg2)
+	//Bit shift left
+	void shlRegister(const std::string& arg1, const std::string& arg2)
 	{
 		try
 		{
@@ -322,7 +344,8 @@ public:
 		
 	}
 
-	void shrRegister(std::string arg1, std::string arg2)
+	//Bit shift right
+	void shrRegister(const std::string& arg1, const std::string& arg2)
 	{
 		try
 		{
@@ -368,7 +391,8 @@ public:
 
 	}
 
-	void addRegister(std::string arg1, std::string arg2)
+	//Adds two registers together
+	void addRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -391,7 +415,8 @@ public:
 		}
 	}
 
-	void subRegister(std::string arg1, std::string arg2)
+	//Subtracts two registers from each other
+	void subRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -414,7 +439,8 @@ public:
 		}
 	}
 
-	void mulRegister(std::string arg1, std::string arg2)
+	//Multiplies two registers together
+	void mulRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -437,7 +463,8 @@ public:
 		}
 	}
 
-	void divRegister(std::string arg1, std::string arg2)
+	//Divides two registers 
+	void divRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		bool foundReg1 = false, foundReg2 = false;
@@ -460,7 +487,8 @@ public:
 		}
 	}
 
-	void cmpRegister(std::string arg1, std::string arg2)
+	//Subtraction, if the result is 0 the flag is enabled
+	void cmpRegister(const std::string& arg1, const std::string& arg2)
 	{
 		u8 value1, value2;
 		for (auto& x : registers)
@@ -482,7 +510,8 @@ public:
 		isEqual = false;
 	}
 
-	void pushRegister(std::string arg)
+	//Pushes a value on to a stack, or the value of a register
+	void pushRegister(const std::string& arg)
 	{
 		try
 		{
@@ -507,7 +536,8 @@ public:
 		}
 	}
 
-	void popRegister(std::string registerName)
+	//Pops the top value from the stack on to a register
+	void popRegister(const std::string& registerName)
 	{
 		if (stack.size() < 1)
 		{
@@ -524,11 +554,13 @@ public:
 		}
 	}
 
+	//Prints any enabled flags
 	void printFlags()
 	{
 		isEqual == true ? std::cout << "Equal flag enabled\n" : std::cout << "Equal flag disabled\n";
 	}
 
+	//Prints all available commands
 	void printHelp()
 	{
 		std::cout << "\nWelcome to the Assembly Interpreter!\n\nCommands:\n\nmov   (to reg) (value) \n"

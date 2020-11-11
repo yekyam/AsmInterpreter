@@ -13,12 +13,12 @@ Commands:
 **and   (to reg), (from reg)**    *:Performs the bitwise AND operation, with the result stored in the first register*  
 **xor   (to reg), (from reg)**    *:Performs the bitwise XOR operation, with the result stored in the first register*  
 **cmp   (to reg), (from reg)**    *:Compares two registers by subtraction. If the result is 0, the equal flag is enabled*  
+**add   (to reg), (from reg)**    *:Adds the two specified registers together, with the result stored in the first register*  
+**sub   (to reg), (from reg)**    *:Subtracts the two registers, with the result stored in the first register*  
+**mul   (to reg), (from reg)**    *:Multiplies the two specified registers together, with the result stored in the first register*  
+**div   (to reg), (from reg)**    *:Divides the two specified registers together, with the result stored in the first register*  
 **push  (reg)**        *:Pushes either a value, or a register's value to the stack*  
 **pop   (reg)**        *:Pops the most recent stack variable on to the specified register*  
-**add   (to reg),**    *:Adds the two specified registers together, with the result stored in the first register*  
-**sub   (to reg),**    *:Subtracts the two registers, with the result stored in the first register*  
-**mul   (to reg),**    *:Multiplies the two specified registers together, with the result stored in the first register*  
-**div   (to reg),**    *:Divides the two specified registers together, with the result stored in the first register* 
 
 ## Example Command  
 These are all valid examples syntactically

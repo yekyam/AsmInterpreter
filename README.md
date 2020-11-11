@@ -6,7 +6,6 @@ registers are 8 bits long, which is a good length to see how the bits change wit
 
 **Registers:** *AL, BL, CL*  
 
-Any time an arg is (NULL), the arg is still necessary, just pass in any value  
 Commands:  
 **mov   (to reg), (from reg)**  
 **mov   (to reg), (value)**       *:Moves either a value, or a value stored in a register to the specified register*  
@@ -14,9 +13,19 @@ Commands:
 **and   (to reg), (from reg)**    *:Performs the bitwise AND operation, with the result stored in the first register*  
 **xor   (to reg), (from reg)**    *:Performs the bitwise XOR operation, with the result stored in the first register*  
 **cmp   (to reg), (from reg)**    *:Compares two registers by subtraction. If the result is 0, the equal flag is enabled*  
-**push  (reg),    (NULL)**        *:Pushes either a value, or a register's value to the stack*  
-**pop   (reg),    (NULL)**        *:Pops the most recent stack variable on to the specified register*  
-**add   (to reg), (from reg)**    *:Adds the two specified registers together, with the result stored in the first register*  
-**sub   (to reg), (from reg)**    *:Subtracts the two registers, with the result stored in the first register*  
-**mul   (to reg), (from reg)**    *:Multiplies the two specified registers together, with the result stored in the first register*  
-**div   (to reg), (from reg)**    *:Divides the two specified registers together, with the result stored in the first register*  
+**push  (reg)**        *:Pushes either a value, or a register's value to the stack*  
+**pop   (reg)**        *:Pops the most recent stack variable on to the specified register*  
+**add   (to reg),**    *:Adds the two specified registers together, with the result stored in the first register*  
+**sub   (to reg),**    *:Subtracts the two registers, with the result stored in the first register*  
+**mul   (to reg),**    *:Multiplies the two specified registers together, with the result stored in the first register*  
+**div   (to reg),**    *:Divides the two specified registers together, with the result stored in the first register* 
+
+## Example Command  
+These are all valid examples syntactically
+
+**mov AL, 5**  
+**MOV AL  5**  
+**mov AL  5**  
+
+The only things that must be capatalized are the register names. Other than that, comamnds can be capitalized, commas seperating the arguments are optional,  
+and you can pass in a variable number of arguments, so no need to pass NULL for every blank argument. 

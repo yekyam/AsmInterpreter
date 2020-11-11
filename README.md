@@ -12,8 +12,8 @@ Commands:
 **or    (to reg), (from reg)**    *:Performs the bitwise OR operation, with the result stored in the first register*  
 **and   (to reg), (from reg)**    *:Performs the bitwise AND operation, with the result stored in the first register*  
 **xor   (to reg), (from reg)**    *:Performs the bitwise XOR operation, with the result stored in the first register*
-**shl   (to reg), (num bits)**    *:Performs the bitwise shift left operation, with the result stored in the first register. Accepts both a register and a value*
-**shr   (to reg), (num bits)**    *:Performs the bitwise shift right operation, with the result stored in the first register. Accepts both a register and a value*
+**shl   (to reg), (num bits)**    *:Performs the bitwise shift left operation, with the result stored in the first register. Accepts both a register and a value*  
+**shr   (to reg), (num bits)**    *:Performs the bitwise shift right operation, with the result stored in the first register. Accepts both a register and a value*  
 **cmp   (to reg), (from reg)**    *:Compares two registers by subtraction. If the result is 0, the equal flag is enabled*  
 **add   (to reg), (from reg)**    *:Adds the two specified registers together, with the result stored in the first register*  
 **sub   (to reg), (from reg)**    *:Subtracts the two registers, with the result stored in the first register*  

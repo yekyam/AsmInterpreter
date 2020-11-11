@@ -2,14 +2,15 @@
 #include <string>
 #include <bitset>
 #include <stack>
+#include <vector>
 
 typedef uint8_t u8;
 typedef unsigned int ui;
 enum { AL, BL, CL, NUM_REGISTERS };
 
-//mov   (to reg), (from reg) C
-//mov   (to reg), (value) C
-//or    (to reg), (from reg \) C
+//mov   (to reg), (from reg)
+//mov   (to reg), (value)
+//or    (to reg), (from reg) 
 //and   (to reg), (from reg) 
 //xor   (to reg), (from reg)
 //add   (to reg), (from reg)
@@ -24,6 +25,7 @@ enum { AL, BL, CL, NUM_REGISTERS };
 class AsmI
 {
 private:
+	std::vector<std::string> cutStrings;
 	bool isEqual;
 	struct Register
 	{
@@ -45,20 +47,65 @@ public:
 		}
 	}
 
-	void command(std::string command, std::string arg1, std::string arg2)
+	void handleInput(std::string& input)
 	{
-		if (lowercase(command) == "mov") mov(arg1, arg2);
-		else if (lowercase(command) == "or") orRegister(arg1, arg2);
-		else if (lowercase(command) == "xor") xorRegister(arg1, arg2);
-		else if (lowercase(command) == "and") andRegister(arg1, arg2);
-		else if (lowercase(command) == "add") addRegister(arg1, arg2);
-		else if (lowercase(command) == "sub") subRegister(arg1, arg2);
-		else if (lowercase(command) == "mul") mulRegister(arg1, arg2);
-		else if (lowercase(command) == "div") divRegister(arg1, arg2);
-		else if (lowercase(command) == "cmp") cmpRegister(arg1, arg2);
-		else if (lowercase(command) == "push") pushRegister(arg1);
-		else if (lowercase(command) == "pop") popRegister(arg1);
-		else if (lowercase(command) == "flags") printFlags();
+		std::string word;
+		for (auto x : input)
+		{
+			if (x == ',')  { }
+			else if (x == ' ')
+			{
+				cutStrings.push_back(word);
+				word = "";
+			}
+			else
+			{
+				word += x;
+			}
+		}
+		cutStrings.push_back(word);
+	}
+
+	void command()
+	{
+		if (cutStrings.size() < 1)
+		{
+			std::cout << "Invalid number of arguments! Must have at least two arguments!\n";
+		}
+		else if (cutStrings.size() == 1)
+		{
+			std::string command = cutStrings.at(0);
+			if (lowercase(command) == "flags") printFlags();
+			else if (lowercase(command) == "help") printHelp();
+			else std::cout << "Error! Invalid command!\n";
+			cutStrings.clear();
+		}
+		else if (cutStrings.size() == 2)
+		{
+			std::string command = cutStrings.at(0);
+			std::string arg1 = cutStrings.at(1);
+			if (lowercase(command) == "push") pushRegister(arg1);
+			else if (lowercase(command) == "pop") popRegister(arg1);
+			else std::cout << "Error! Invalid command!\n";
+			cutStrings.clear();
+		}
+		else {
+			std::string command = cutStrings.at(0);
+			std::string arg1 = cutStrings.at(1);
+			std::string arg2 = cutStrings.at(2);
+
+			if (lowercase(command) == "mov") mov(arg1, arg2);
+			else if (lowercase(command) == "or") orRegister(arg1, arg2);
+			else if (lowercase(command) == "xor") xorRegister(arg1, arg2);
+			else if (lowercase(command) == "and") andRegister(arg1, arg2);
+			else if (lowercase(command) == "add") addRegister(arg1, arg2);
+			else if (lowercase(command) == "sub") subRegister(arg1, arg2);
+			else if (lowercase(command) == "mul") mulRegister(arg1, arg2);
+			else if (lowercase(command) == "div") divRegister(arg1, arg2);
+			else if (lowercase(command) == "cmp") cmpRegister(arg1, arg2);
+			else std::cout << "Error! Invalid command!\n";
+			cutStrings.clear();
+		}
 	}
 
 	static std::string lowercase(std::string string)
@@ -355,6 +402,11 @@ public:
 
 	void popRegister(std::string registerName)
 	{
+		if (stack.size() < 1)
+		{
+			std::cout << "Stack has no value!\n";
+			return;
+		}
 		for (auto& x : registers)
 		{
 			if (getRegisterID(registerName) == x.registerID)
@@ -369,6 +421,24 @@ public:
 	{
 		isEqual == true ? std::cout << "Equal flag enabled\n" : std::cout << "Equal flag disabled\n";
 	}
+
+	void printHelp()
+	{
+		std::cout << "\nWelcome to the Assembly Interpreter!\n\nCommands:\n\nmov   (to reg) (value) \n"
+			<< "mov   (to reg) (from reg)\n"
+			<< "or    (to reg) (from reg)\n"
+			<< "and   (to reg) (from reg)\n"
+			<< "xor   (to reg) (from reg)\n"
+			<< "add   (to reg) (from reg)\n"
+			<< "cmp   (to reg) (from reg)\n"
+			<< "add   (to reg) (from reg)\n"
+			<< "sub   (to reg) (from reg)\n"
+			<< "div   (to reg) (from reg)\n"
+			<< "mul   (to reg) (from reg)\n"
+			<< "mod   (to reg) (from reg)\n"
+			<< "push  (reg)\n"
+			<< "pop   (reg)\n\n";
+	}
 };
 
 int main()
@@ -378,10 +448,10 @@ int main()
 	//asmI.printBits("AL");
 	while (1)
 	{
-		std::string command, arg1, arg2;
-		std::cin >> command >> arg1 >> arg2;
-		asmI.command(command, arg1, arg2);
+		std::string line = "";
+		std::getline(std::cin, line);
+		asmI.handleInput(line);
+		asmI.command(); 
 		asmI.printRegisters();
-	}
-	
+	}	
 }

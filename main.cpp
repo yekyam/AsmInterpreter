@@ -70,7 +70,7 @@ public:
 	{
 		if (cutStrings.size() < 1)
 		{
-			std::cout << "Invalid number of arguments! Must have at least two arguments!\n";
+			std::cout << "Invalid number of arguments! Must have at least one argument!\n";
 		}
 		else if (cutStrings.size() == 1)
 		{
@@ -84,20 +84,22 @@ public:
 		{
 			std::string command = cutStrings.at(0);
 			std::string arg1 = cutStrings.at(1);
-			if (lowercase(command) == "push") pushRegister(arg1);
-			else if (lowercase(command) == "pop") popRegister(arg1);
+			if (lowercase(command) == "push") pushRegister(uppercase(arg1));
+			else if (lowercase(command) == "pop") popRegister(uppercase(arg1));
 			else std::cout << "Error! Invalid command!\n";
 			cutStrings.clear();
 		}
 		else {
 			std::string command = cutStrings.at(0);
-			std::string arg1 = cutStrings.at(1);
-			std::string arg2 = cutStrings.at(2);
+			std::string arg1 = uppercase(cutStrings.at(1));
+			std::string arg2 = uppercase(cutStrings.at(2));
 
 			if (lowercase(command) == "mov") mov(arg1, arg2);
 			else if (lowercase(command) == "or") orRegister(arg1, arg2);
 			else if (lowercase(command) == "xor") xorRegister(arg1, arg2);
 			else if (lowercase(command) == "and") andRegister(arg1, arg2);
+			else if (lowercase(command) == "shl") shlRegister(arg1, arg2);
+			else if (lowercase(command) == "shr") shrRegister(arg1, arg2);
 			else if (lowercase(command) == "add") addRegister(arg1, arg2);
 			else if (lowercase(command) == "sub") subRegister(arg1, arg2);
 			else if (lowercase(command) == "mul") mulRegister(arg1, arg2);
@@ -108,12 +110,25 @@ public:
 		}
 	}
 
-	static std::string lowercase(std::string string)
+	static std::string lowercase(std::string& string)
 	{
 		std::string result;
 		for (const auto& x : string)
 			result += std::tolower(x);
 		return result; 
+	}
+
+	static std::string uppercase(std::string& string)
+	{
+		if (std::isalpha(string.at(0))) {
+			std::string result;
+			for (auto& x : string)
+			{
+				result += std::toupper(x);
+			}
+			return result;
+		}
+		else return string;
 	}
 
 	static int getRegisterID(std::string name)
@@ -124,11 +139,11 @@ public:
 		return result;
 	}
 
-	void setRegister(std::string registerID, u8 value)
+	void setRegister(std::string registerName, u8 value)
 	{
 		for (auto& x : registers)
 		{
-			if (x.registerID == getRegisterID(registerID))
+			if (x.registerID == getRegisterID(registerName))
 			{
 				x.registerValue = value;
 			}
@@ -259,6 +274,98 @@ public:
 		{
 			setRegister(arg1, value1 & value2);
 		}
+	}
+
+	void shlRegister(std::string arg1, std::string arg2)
+	{
+		try
+		{
+			bool foundReg = false;
+			u8 value = 0;
+			int shiftNum = std::stoi(arg2);
+			if (shiftNum > 7)
+			{
+				std::cout << "To big! Max number to shift is only 7!\n";
+				return;
+			}
+
+			for (auto& x : registers)
+			{
+				if (x.registerID == getRegisterID(arg1))
+				{
+					setRegister(arg1, x.registerValue << shiftNum);
+				}
+			}
+		}
+		catch (std::exception& e)
+		{
+			u8 value1, value2;
+			bool foundReg1 = false, foundReg2 = false;
+			for (auto& x : registers)
+			{
+				if (x.registerID == getRegisterID(arg2))
+				{
+					foundReg1 = true;
+					value2 = x.registerValue;
+				}
+				if (x.registerID == getRegisterID(arg1))
+				{
+					foundReg2 = true;
+					value1 = x.registerValue;
+				}
+			}
+			if (foundReg1 && foundReg2)
+			{
+				setRegister(arg1, value1 << value2);
+			}
+		}
+		
+	}
+
+	void shrRegister(std::string arg1, std::string arg2)
+	{
+		try
+		{
+			bool foundReg = false;
+			u8 value = 0;
+			int shiftNum = std::stoi(arg2);
+			if (shiftNum > 7)
+			{
+				std::cout << "To big! Max number to shift is only 7!\n";
+				return;
+			}
+
+			for (auto& x : registers)
+			{
+				if (x.registerID == getRegisterID(arg1))
+				{
+					setRegister(arg1, x.registerValue >> shiftNum);
+				}
+			}
+		}
+		catch (std::exception& e)
+		{
+			u8 value1, value2;
+			bool foundReg1 = false, foundReg2 = false;
+			for (auto& x : registers)
+			{
+				if (x.registerID == getRegisterID(arg2))
+				{
+					foundReg1 = true;
+					value2 = x.registerValue;
+				}
+				if (x.registerID == getRegisterID(arg1))
+				{
+					foundReg2 = true;
+					value1 = x.registerValue;
+				}
+			}
+			if (foundReg1 && foundReg2)
+			{
+				setRegister(arg1, value1 >> value2);
+			}
+		}
+
 	}
 
 	void addRegister(std::string arg1, std::string arg2)
@@ -429,6 +536,8 @@ public:
 			<< "or    (to reg) (from reg)\n"
 			<< "and   (to reg) (from reg)\n"
 			<< "xor   (to reg) (from reg)\n"
+			<< "shl   (to reg) (num bits)\n"
+			<< "shr   (to reg) (num bits)\n"
 			<< "add   (to reg) (from reg)\n"
 			<< "cmp   (to reg) (from reg)\n"
 			<< "add   (to reg) (from reg)\n"
@@ -444,8 +553,6 @@ public:
 int main()
 {
 	AsmI asmI;
-	//asmI.setRegister("AL", 5);
-	//asmI.printBits("AL");
 	while (1)
 	{
 		std::string line = "";

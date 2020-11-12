@@ -28,5 +28,7 @@ These are all valid examples syntactically
 **mov AL, 5**  
 **MOV AL  5**  
 **mov AL  5**  
+**mov al, 5**  
+**mov al  5**  
 
-The only things that must be capatalized are the register names. Other than that, comamnds can be capitalized, commas seperating the arguments are optional, and you can pass in a variable number of arguments, so no need to pass NULL for every blank argument. 
+Comamnds can be capitalized, registers can be lowercase, commas seperating the arguments are optional, and you can pass in a variable number of arguments, so no need to pass NULL for every blank argument. 

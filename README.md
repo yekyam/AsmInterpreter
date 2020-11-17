@@ -19,7 +19,7 @@ Commands:
 **sub   (to reg), (from reg)**    *:Subtracts the two registers, with the result stored in the first register*  
 **mul   (to reg), (from reg)**    *:Multiplies the two specified registers together, with the result stored in the first register*  
 **div   (to reg), (from reg)**    *:Divides the two specified registers together, with the result stored in the first register*  
-**push  (reg)**        *:Pushes either a value, or a register's value to the stack*  
+**push  (reg)**        *:Pushes a register's value to the stack*  
 **pop   (reg)**        *:Pops the most recent stack variable on to the specified register*  
 
 ## Example Command  
@@ -32,3 +32,12 @@ These are all valid examples syntactically
 **mov al  5**  
 
 Comamnds can be capitalized, registers can be lowercase, commas seperating the arguments are optional, and you can pass in a variable number of arguments, so no need to pass NULL for every blank argument. 
+
+## Compiler  
+The compiler, as of right now, has the exact same functionality as the interpreter. Compile the file compiler.cpp:  
+**compiler (mode) (fileIN) (optional fileOUT)** *:There are two modes, 1 and 2. FileIN is the file you are compiling/executing, and FileOUT is the file that you are creating.*  
+
+## Example Compiler:
+$./compiler 1 Test Output  
+$./compiler 2 Output
+
